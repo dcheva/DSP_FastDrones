@@ -1,37 +1,34 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 
-namespace FastDrones
+namespace com.dkoppstein.plugin.DSP.FastDrones
 {
     [BepInPlugin("com.dkoppstein.plugin.DSP.FastDrones", "FastDrones", "0.0.1")]
     [BepInProcess("DSPGAME.exe")]
     public class FastDronesPlugin : BaseUnityPlugin
     {
-        public static ManualLogSource Logger;
+        private static readonly float INCREMENT_DRONE_SPEED = 45.0F;
+        private static readonly double DECREASE_DRONE_ENERGY_FACTOR = 5.0;
 
-        private void Start() {
-            FastDronesPlugin.Logger = this.get_Logger();
-            PluginConfig.Init(this.get_Config());
+        private void Start() 
+        {
             new Harmony("com.dkoppstein.plugin.DSP.FastDrones").PatchAll(typeof(FastDronesPlugin.MechaDronePatch));
-            FastDronesPlugin.Logger.LogInfo((object) string.Format("IncreaseMaxWarpSpeed loaded with speed updated to {0} {1}", (object) PluginConfig.WarpSpeed.get_Value(), (object) PluginConfig.SpeedType.get_Value()));
         }
 
 
-        public FastDronesPlugin() => base.\u002Ector();
+        public FastDronesPlugin() : base()
+        {
+            return;
+        }
 
         [HarmonyPatch(typeof(MechaDrone))]
         public class MechaDronePatch
         {
-          internal static float getNewDroneSpeed()
-          {
-            double num = PluginConfig.WarpSpeed.get_Value();
-            return num
-          }
-
           [HarmonyPrefix]
           [HarmonyPatch("Update")]
           public static bool ChangeDroneSpeedPrefix(MechaDrone __drone,
@@ -44,8 +41,8 @@ namespace FastDrones
           {
             Console.WriteLine(string.Format("Drone speed before prefix is: {0}", (object) __drone.speed));
             Console.WriteLine(string.Format("Energy rate before prefix is: {0}", (object) energyRate));
-            __drone.speed += FastDronesPlugin.IncrementDroneSpeed;
-            energyRate = double (energyRAte / FastDronesPlugin.DecreaseDroneEnergyFactor / 5)
+            __drone.speed += FastDronesPlugin.INCREMENT_DRONE_SPEED;
+            energyRate = (double)energyRate / (double)FastDronesPlugin.DECREASE_DRONE_ENERGY_FACTOR;
             Console.WriteLine(string.Format("New drone speed after prefix is: {0}", (object) __drone.speed));
             Console.WriteLine(string.Format("New energy rate after prefix is: {0}", (object) energyRate));
             return true;
@@ -61,11 +58,11 @@ namespace FastDrones
                                                      double energyRate)
           {
             Console.WriteLine(string.Format("Drone speed before postfix is: {0}", (object) __drone.speed));
-            __drone.speed -= FastDronesPlugin.IncrementDroneSpeed;
+            __drone.speed -= FastDronesPlugin.INCREMENT_DRONE_SPEED;
             Console.WriteLine(string.Format("New warp speed after postfix is: {0}", (object) __drone.speed));
             return true;
           }
         }
-      }
+     
     }
 }

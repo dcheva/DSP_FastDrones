@@ -1,0 +1,7 @@
+{
+    "name": "FastDrones",
+    "description": "This mod increases the speed of Mecha Drones by a set amount (default: 45). It also decreases energy usage of drones by a set factor (default: 5)",
+    "version_number": "0.0.1",
+    "dependencies": [],
+    "website_url": "https://github.com/dkoppstein/FastDrones"
+}

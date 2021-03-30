@@ -12,10 +12,10 @@ namespace com.dkoppstein.plugin.DSP.FastDrones
     [BepInProcess("DSPGAME.exe")]
     public class FastDronesPlugin : BaseUnityPlugin
     {
-        private static readonly float INCREMENT_DRONE_SPEED = 45.0F;
-        private static readonly double DECREASE_DRONE_ENERGY_FACTOR = 5.0;
+        private static readonly float INCREMENT_DRONE_SPEED = 42.0F;
+        private static readonly double DECREASE_DRONE_ENERGY_FACTOR = 50.0;
 
-        private void Start() 
+        private void Start()
         {
             new Harmony("com.dkoppstein.plugin.DSP.FastDrones").PatchAll(typeof(FastDronesPlugin.MechaDronePatch));
         }
@@ -29,40 +29,39 @@ namespace com.dkoppstein.plugin.DSP.FastDrones
         [HarmonyPatch(typeof(MechaDrone))]
         public class MechaDronePatch
         {
-          [HarmonyPrefix]
-          [HarmonyPatch("Update")]
-          public static bool ChangeDroneSpeedPrefix(MechaDrone __drone,
-                                                    PrebuildData[] prebuildPool,
-                                                    Vector3 playerPos,
-                                                    float dt,
-                                                    ref double energy,
-                                                    ref double energyChange,
-                                                    double energyRate)
-          {
-            Console.WriteLine(string.Format("Drone speed before prefix is: {0}", (object) __drone.speed));
-            Console.WriteLine(string.Format("Energy rate before prefix is: {0}", (object) energyRate));
-            __drone.speed += FastDronesPlugin.INCREMENT_DRONE_SPEED;
-            energyRate = (double)energyRate / (double)FastDronesPlugin.DECREASE_DRONE_ENERGY_FACTOR;
-            Console.WriteLine(string.Format("New drone speed after prefix is: {0}", (object) __drone.speed));
-            Console.WriteLine(string.Format("New energy rate after prefix is: {0}", (object) energyRate));
-            return true;
-          }
-          [HarmonyPostfix]
-          [HarmonyPatch("Update")]
-          public static bool ChangeDroneSpeedPostfix(MechaDrone __drone,
-                                                     PrebuildData[] prebuildPool,
-                                                     Vector3 playerPos,
-                                                     float dt,
-                                                     ref double energy,
-                                                     ref double energyChange,
-                                                     double energyRate)
-          {
-            Console.WriteLine(string.Format("Drone speed before postfix is: {0}", (object) __drone.speed));
-            __drone.speed -= FastDronesPlugin.INCREMENT_DRONE_SPEED;
-            Console.WriteLine(string.Format("New warp speed after postfix is: {0}", (object) __drone.speed));
-            return true;
-          }
+            [HarmonyPrefix]
+            [HarmonyPatch("Update")]
+            public static void ChangeDroneSpeedPrefix(ref MechaDrone __instance,
+                                                      PrebuildData[] prebuildPool,
+                                                      Vector3 playerPos,
+                                                      float dt,
+                                                      ref double energy,
+                                                      ref double energyChange,
+                                                      ref double energyRate)
+            {
+                //FileLog.Log(string.Format("Drone speed before prefix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("Energy rate before prefix is: {0}", (object) energyRate));
+                __instance.speed += FastDronesPlugin.INCREMENT_DRONE_SPEED;
+                energyRate = (double)energyRate / (double)FastDronesPlugin.DECREASE_DRONE_ENERGY_FACTOR;
+                //FileLog.Log(string.Format("New drone speed after prefix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("New energy rate after prefix is: {0}", (object) energyRate));
+            }
+            [HarmonyPostfix]
+            [HarmonyPatch("Update")]
+            public static void ChangeDroneSpeedPostfix(ref MechaDrone __instance,
+                                                      PrebuildData[] prebuildPool,
+                                                      Vector3 playerPos,
+                                                      float dt,
+                                                      ref double energy,
+                                                      ref double energyChange,
+                                                      ref double energyRate)
+            {
+                //FileLog.Log(string.Format("Drone speed before postfix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("Energy rate before postfix is: {0}", (object) energyRate));
+                __instance.speed -= FastDronesPlugin.INCREMENT_DRONE_SPEED;
+                //FileLog.Log(string.Format("New drone speed after postfix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("New energy rate after postfix is: {0}", (object) energyRate));
+            }
         }
-     
     }
 }

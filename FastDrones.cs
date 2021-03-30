@@ -8,7 +8,7 @@ using System.Text;
 
 namespace com.dkoppstein.plugin.DSP.FastDrones
 {
-    [BepInPlugin("com.dkoppstein.plugin.DSP.FastDrones", "FastDrones", "0.0.2")]
+    [BepInPlugin("com.dkoppstein.plugin.DSP.FastDrones", "FastDrones", "0.0.4")]
     [BepInProcess("DSPGAME.exe")]
     public class FastDronesPlugin : BaseUnityPlugin
     {
@@ -40,12 +40,12 @@ namespace com.dkoppstein.plugin.DSP.FastDrones
                                                       ref double energyRate, 
                                                       out float __state)
             {
-                FileLog.Log(string.Format("Drone speed before prefix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("Drone speed before prefix is: {0}", (object)__instance.speed));
                 //FileLog.Log(string.Format("Energy rate before prefix is: {0}", (object) energyRate));
                 __state = __instance.speed; // remember original speed
                 __instance.speed = FastDronesPlugin.DRONE_SPEED;
                 energyRate = (double)energyRate / (double)FastDronesPlugin.DECREASE_DRONE_ENERGY_FACTOR;
-                FileLog.Log(string.Format("New drone speed after prefix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("New drone speed after prefix is: {0}", (object)__instance.speed));
                 //FileLog.Log(string.Format("New energy rate after prefix is: {0}", (object) energyRate));
             }
             [HarmonyPostfix]
@@ -59,10 +59,10 @@ namespace com.dkoppstein.plugin.DSP.FastDrones
                                                       ref double energyRate,
                                                       float __state)
             {
-                FileLog.Log(string.Format("Drone speed before postfix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("Drone speed before postfix is: {0}", (object)__instance.speed));
                 //FileLog.Log(string.Format("Energy rate before postfix is: {0}", (object) energyRate));
                 __instance.speed = __state; // reset back to original
-                FileLog.Log(string.Format("New drone speed after postfix is: {0}", (object)__instance.speed));
+                //FileLog.Log(string.Format("New drone speed after postfix is: {0}", (object)__instance.speed));
                 //FileLog.Log(string.Format("New energy rate after postfix is: {0}", (object) energyRate));
             }
         }
